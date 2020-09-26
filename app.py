@@ -42,7 +42,7 @@ def register_user():
                 'Username take. Please pick another...')
             return render_template('register.html', form=form)
         session['username'] = new_user.username
-        return redirect('/secret')
+        return redirect(f'/users/{new_user.username}')
     return render_template('register.html', form=form)
 
 
@@ -65,7 +65,24 @@ def login():
         if user:
             session['username'] = user.username
             flash(f'Welcome Back {username}')
-            return redirect('/secret')
+            return redirect(f'/users/{username}')
         else:
             form.username.errors = ['Invalid username/password']
     return render_template('login.html', form=form)
+
+
+@app.route('/logout')
+def logout_user():
+    session.pop('username')
+    flash('Goodbye!', 'info')
+    return redirect('/')
+
+
+@app.route('/users/<username>')
+def show_user(username):
+    if 'username' in session:
+        user = User.query.filter_by(username=username).first()
+        return render_template('user.html', user=user)
+    else:
+        flash('Please login first!', 'error')
+        return redirect('/login')
