@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, session, flash
 from flask_debugtoolbar import DebugToolbarExtension
-from models import connect_db, db, User
-from forms import UserRegisterForm, LoginUserForm
+from models import connect_db, db, User, Feedback
+from forms import UserRegisterForm, LoginUserForm, FeedbackForm
 from sqlalchemy.exc import IntegrityError
 
 
@@ -86,3 +86,35 @@ def show_user(username):
     else:
         flash('Please login first!', 'error')
         return redirect('/login')
+
+
+@app.route('/users/<username>/delete', methods=['POST'])
+def delete_user(username):
+    if session['username'] == username:
+        user = User.query.filter_by(username=username).first()
+        db.session.delete(user)
+        db.session.commit()
+        flash(f'{username} succesfully deleted', 'info')
+        return redirect('/')
+    else:
+        flash("You don't have permission to delete this user", 'error')
+        return redirect(f'/users/{username}')
+
+
+@app.route('/users/<username>/feedback/add', methods=['GET', 'POST'])
+def add_feedback(username):
+    if session['username'] == username:
+        form = FeedbackForm()
+        user = User.query.filter_by(username=username).first()
+        if form.validate_on_submit():
+            title = form.title.data
+            content = form.content.data
+            new_feedback = Feedback(
+                title=title, content=content, username=user.username)
+            db.session.add(new_feedback)
+            db.session.commit()
+        else:
+            return render_template('add_feedback.html', form=form, user=user)
+    else:
+        flash("You don't have permission to do that")
+        return redirect(f'/users/{username}')

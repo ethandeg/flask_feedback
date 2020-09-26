@@ -8,9 +8,27 @@
         <div class="card-body">
           <h5 class="card-title">{{user.last_name}}, {{user.first_name}}</h5>
           <h6 class="card-subtitle mb-2 text-muted">{{user.email}}</h6>
-          <!-- <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="#" class="card-link">Card link</a>
-          <a href="#" class="card-link">Another link</a> -->
+          <ul>
+              {% for feedback in user.feedback %}
+              {% if session['username'] == user.username %}
+              <li>{{feedback.title}} - {{feedback.content}}
+                  <form action="/users/{{user.feedback}}/delete" method='POST' style='display:inline;'>
+                    <a class = 'badge badge-primary' href="/users/{{user.feedback}}/update">Edit</a>
+                    <button class = 'badge badge-danger'>Delete</button>
+                </form>
+              </li>
+              {% else %}
+              <li>{{feedback.title}} - {{feedback.content}}</li>
+              {% endif %}
+              {% endfor %}
+          </ul>
+          {% if session['username'] == user.username %}
+          <form action="/users/{{user.username}}/delete" method='POST'>
+            <a href="/users/{{user.username}}/feedback/add" class = 'btn btn-primary'>Add more feedback</a>
+            <button class = 'btn btn-danger'>Delete User</button>
+        </form>
+          {% endif %}
+
         </div>
       </div>
 </div>
