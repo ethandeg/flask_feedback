@@ -125,8 +125,8 @@ def add_feedback(username):
 def update_feedback(feedback_id):
     feedback = Feedback.query.get_or_404(feedback_id)
     if session['username'] == feedback.user.username:
-        form = FeedbackForm()
-
+        form = FeedbackForm(obj=feedback)
+        
         if form.validate_on_submit():
             feedback.title = form.title.data
             feedback.content = form.content.data
