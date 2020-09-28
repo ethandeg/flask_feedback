@@ -113,8 +113,41 @@ def add_feedback(username):
                 title=title, content=content, username=user.username)
             db.session.add(new_feedback)
             db.session.commit()
+            return redirect(f'/users/{username}')
         else:
             return render_template('add_feedback.html', form=form, user=user)
     else:
         flash("You don't have permission to do that")
         return redirect(f'/users/{username}')
+
+
+@app.route('/feedback/<int:feedback_id>/update', methods=['GET', 'POST'])
+def update_feedback(feedback_id):
+    feedback = Feedback.query.get_or_404(feedback_id)
+    if session['username'] == feedback.user.username:
+        form = FeedbackForm()
+
+        if form.validate_on_submit():
+            feedback.title = form.title.data
+            feedback.content = form.content.data
+            flash(f"{feedback.title} was successfully updated!")
+            db.session.commit()
+            return redirect(f'/users/{feedback.user.username}')
+        else:
+            return render_template('update_feedback.html', form=form, feedback=feedback)
+    else:
+        flash("you don't have permission to do that")
+        return redirect('/login')
+
+@app.route('/feedback/<int:feedback_id>/delete', methods=['POST'])
+def delete_feedback(feedback_id):
+    feedback = Feedback.query.get_or_404(feedback_id)
+    if session['username'] == feedback.user.username:
+        db.session.delete(feedback)
+        db.session.commit()
+        flash("Feedback successfully Deleted")
+        return redirect(f'/users/{feedback.user.username}')
+    else:
+        flash("You don't have permission to do that")
+        return redirect('/login')
+        

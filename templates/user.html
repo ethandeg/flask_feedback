@@ -12,8 +12,8 @@
               {% for feedback in user.feedback %}
               {% if session['username'] == user.username %}
               <li>{{feedback.title}} - {{feedback.content}}
-                  <form action="/users/{{user.feedback}}/delete" method='POST' style='display:inline;'>
-                    <a class = 'badge badge-primary' href="/users/{{user.feedback}}/update">Edit</a>
+                  <form action="/feedback/{{feedback.id}}/delete" method='POST' style='display:inline;'>
+                    <a class = 'badge badge-primary' href="/feedback/{{feedback.id}}/update">Edit</a>
                     <button class = 'badge badge-danger'>Delete</button>
                 </form>
               </li>

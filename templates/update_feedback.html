@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{%block title %}Login{% endblock %}
+{%block title %}Update {{feedback.title}}{% endblock %}
 
 {% block content %}
 <h1 class = 'display 1 text-center'></h1>
@@ -17,6 +17,6 @@
         </p>
             {% endfor %}
 
-        <button type = 'submit' class = 'btn btn-success'>Login</button>
+        <button type = 'submit' class = 'btn btn-success'>Update</button>
 </form>
 {% endblock %}
